@@ -16,7 +16,7 @@ function getMove(player, board) {
 
   console.log(validMoves)
 
-  // TODO: Determine best move
+  // Determine best move
   let bestMove = {move: null, score: -999}
   
   for (let i = 0; i < validMoves.length; i++) {
@@ -29,6 +29,7 @@ function getMove(player, board) {
   }
 
   console.log(bestMove)
+  
   return bestMove.move;
 }
 
@@ -189,19 +190,31 @@ function evaluateMove( player, board, move ) {
 
   let score = 0
 
-  // Corners are very powerful
+  // STRATEGY : Be corner greedy
+
   let corners = [[0,0],[7,0],[0,7],[7,7]]
   for ( let i = 0; i < corners.length; i++ ) {
-    if (moveRow == corners[i][0] && moveCol == corners[i][1]) {
-      score += 5
+    let distanceFromCorner = distance(move, corners[i])
+
+    // Corners are very powerful
+    if (distanceFromCorner == 0) {
+      score += 10
+    }
+    // But, placing next to corners is very bad
+    if (distanceFromCorner == 1) {
+      score -= 10
     }
   }
+
+  // STRATEGY : Play near the center 
+  let distanceFromCenter = distance(move, [3.5, 3.5])
+  score += (5.5 - distanceFromCenter)
 
   return score
 }
 
-function manhattanDistance( coord1, coord2 ) {
-  return Math.abs(coord2[1] - coord1[1]) + Math.abs(coord2[0] - coord1[0])
+function distance( coord1, coord2 ) {
+  return Math.max( Math.abs( coord2[1] - coord1[1] ), Math.abs( coord2[0] - coord1[0] ) )
 }
 
 function prepareResponse(move) {
