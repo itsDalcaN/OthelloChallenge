@@ -14,22 +14,18 @@ function getMove(player, board) {
     } 
   } 
 
-  console.log(validMoves)
-
   // Determine best move
-  let bestMove = {move: null, score: -999}
+  let bestMove = { move: null, score: -999 }
   
-  for (let i = 0; i < validMoves.length; i++) {
-    let moveScore = evaluateMove(player, board, validMoves[i])
+  for ( let i = 0; i < validMoves.length; i++ ) {
+    let moveScore = evaluateMove( validMoves[i] )
 
-    if (moveScore > bestMove.score) {
+    if ( moveScore > bestMove.score ) {
       bestMove.move = validMoves[i]
       bestMove.score = moveScore
     }
   }
 
-  console.log(bestMove)
-  
   return bestMove.move;
 }
 
@@ -184,9 +180,8 @@ function isDiagonalOutflankPlacement( player, enemyPlayer, board, row, column ) 
   return false
 }
 
-function evaluateMove( player, board, move ) {
-  let moveRow = move[0]
-  let moveCol = move[1]
+function evaluateMove( move ) {
+  /* Strategies were inspired from: https://www.ultraboardgames.com/othello/tips.php */
 
   let score = 0
 
@@ -194,21 +189,22 @@ function evaluateMove( player, board, move ) {
 
   let corners = [[0,0],[7,0],[0,7],[7,7]]
   for ( let i = 0; i < corners.length; i++ ) {
-    let distanceFromCorner = distance(move, corners[i])
+    let distanceFromCorner = distance( move, corners[i] )
 
     // Corners are very powerful
-    if (distanceFromCorner == 0) {
-      score += 10
+    if ( distanceFromCorner == 0 ) {
+      score += 5
     }
-    // But, placing next to corners is very bad
-    if (distanceFromCorner == 1) {
-      score -= 10
+    // But, placing right next to corners is very bad (good for opponent)
+    if ( distanceFromCorner == 1 ) {
+      score -= 5
     }
   }
 
   // STRATEGY : Play near the center 
-  let distanceFromCenter = distance(move, [3.5, 3.5])
-  score += (5.5 - distanceFromCenter)
+
+  let distanceFromCenter = distance( move, [3.5, 3.5] )
+  score += Math.pow( 3.5 - distanceFromCenter, 2 )
 
   return score
 }
